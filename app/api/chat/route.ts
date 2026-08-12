@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     await connectDB();
-    const { sessionId, text, name, email } = await req.json();
+    const { sessionId, text, name, email, sender } = await req.json();
     if (!sessionId || !text) return NextResponse.json({ error: 'Missing data' }, { status: 400 });
 
     let session = await ChatSession.findOne({ visitorId: sessionId });
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
       await session.save();
     }
 
-    const msg = await ChatMessage.create({ sessionId: session._id, sender: 'user', text });
+    const msg = await ChatMessage.create({ sessionId: session._id, sender: sender || 'user', text });
     return NextResponse.json(msg);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to send' }, { status: 500 });
