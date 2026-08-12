@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function AdminSettings() {
   const [loading, setLoading] = useState(false);
@@ -40,6 +40,32 @@ export default function AdminSettings() {
     reader.readAsDataURL(file);
   };
 
+  const [heroImage, setHeroImage] = useState("");
+
+  // Load existing settings
+  useEffect(() => {
+    fetch("/api/settings").then(r => r.json()).then(d => {
+      if (d && d.heroImage) setHeroImage(d.heroImage);
+    });
+  }, []);
+
+  const handleSaveHero = async () => {
+    setLoading(true);
+    setMessage("Saving hero image...");
+    try {
+      const res = await fetch("/api/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ heroImage })
+      });
+      if (res.ok) setMessage("Hero image updated! Refresh the homepage.");
+      else setMessage("Failed to update hero image.");
+    } catch {
+      setMessage("Error saving hero image.");
+    }
+    setLoading(false);
+  };
+
   return (
     <div style={{ padding: "40px 48px", color: "#1e293b" }}>
       <h1 style={{ fontSize: 24, fontWeight: 800, margin: "0 0 4px", letterSpacing: -1 }}>Site Settings</h1>
@@ -52,6 +78,36 @@ export default function AdminSettings() {
       )}
 
       <div style={{ display: "grid", gap: 24, maxWidth: 600 }}>
+        
+        {/* Hero Image URL */}
+        <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 12, padding: 24 }}>
+          <h2 style={{ fontSize: 16, fontWeight: 700, margin: "0 0 8px" }}>Floating Hero Image</h2>
+          <p style={{ fontSize: 13, color: "#64748b", margin: "0 0 16px" }}>Paste a direct image URL to display it as a floating frame on the homepage.</p>
+          <div style={{ display: "flex", gap: 8 }}>
+            <input 
+              type="url" 
+              placeholder="https://example.com/photo.jpg"
+              value={heroImage}
+              onChange={(e) => setHeroImage(e.target.value)}
+              disabled={loading}
+              style={{ flex: 1, padding: "8px 12px", borderRadius: 6, border: "1px solid #cbd5e1", fontSize: 13 }}
+            />
+            <button 
+              onClick={handleSaveHero}
+              disabled={loading}
+              style={{ padding: "8px 16px", background: "#0f172a", color: "white", border: "none", borderRadius: 6, fontSize: 13, fontWeight: 500, cursor: loading ? "not-allowed" : "pointer" }}
+            >
+              Save
+            </button>
+          </div>
+          {heroImage && (
+            <div style={{ marginTop: 16 }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={heroImage} alt="Preview" style={{ width: 120, height: 120, objectFit: "cover", borderRadius: 8, border: "1px solid #e2e8f0" }} />
+            </div>
+          )}
+        </div>
+
         {/* Favicon Upload */}
         <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 12, padding: 24 }}>
           <h2 style={{ fontSize: 16, fontWeight: 700, margin: "0 0 8px" }}>Favicon</h2>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { ArrowUpRight, ArrowUp, Github, Linkedin, Mail } from "lucide-react";
 import Chatbot from "../components/Chatbot";
+import { motion } from "framer-motion";
 
 const PROJECTS = [
   { num: "01", title: "DigiNews", type: "Full Stack / Product", desc: "Modern news platform with a React interface, Node.js backend and database-driven content pipeline.", tags: ["React", "Node.js", "MySQL"] },
@@ -24,10 +25,15 @@ export default function Home() {
   const [macTab, setMacTab] = useState("overview");
   const [projects, setProjects] = useState<any[]>(PROJECTS);
   const [skills, setSkills] = useState<any[]>([]);
+  const [heroImage, setHeroImage] = useState("");
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [formState, setFormState] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   useEffect(() => {
+    fetch("/api/settings")
+      .then(r => r.json())
+      .then(d => { if (d && d.heroImage) setHeroImage(d.heroImage); })
+      .catch(() => {});
     fetch("/api/projects")
       .then(r => r.json())
       .then(d => {
@@ -121,8 +127,8 @@ export default function Home() {
       </nav>
 
       {/* ── HERO ── */}
-      <section id="top" className="hero">
-        <div className="heroLeft">
+      <section id="top" className="hero" style={{ overflow: "hidden", position: "relative" }}>
+        <div className="heroLeft" style={{ position: "relative", zIndex: 10 }}>
           <h1>
             Full Stack<br />
             Developer &amp;<br />
@@ -137,23 +143,49 @@ export default function Home() {
             <a href="#contact" className="btnOutline">Get in Touch</a>
           </div>
         </div>
-        <div className="heroCards" aria-hidden>
-          <div className="hCard">
-            <span className="hDot green" />
-            <code>npm run build</code>
-            <small>✓ Compiled in 3.2s</small>
+
+        {heroImage ? (
+          <motion.div 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: [0, -15, 0], opacity: 1 }}
+            transition={{ y: { duration: 6, repeat: Infinity, ease: "easeInOut" }, opacity: { duration: 0.8 } }}
+            style={{
+              position: "absolute",
+              right: "5%",
+              top: "15%",
+              width: "40vw",
+              maxWidth: 500,
+              aspectRatio: "3/4",
+              borderRadius: 32,
+              overflow: "hidden",
+              border: "1px solid rgba(255,255,255,0.4)",
+              boxShadow: "0 24px 64px rgba(0,0,0,0.12)",
+              zIndex: 1
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={heroImage} alt="Prerit" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.2), transparent)", pointerEvents: "none" }} />
+          </motion.div>
+        ) : (
+          <div className="heroCards" aria-hidden>
+            <div className="hCard">
+              <span className="hDot green" />
+              <code>npm run build</code>
+              <small>✓ Compiled in 3.2s</small>
+            </div>
+            <div className="hCard">
+              <span className="hDot blue" />
+              <code>React · Next.js 15</code>
+              <small>Full Stack</small>
+            </div>
+            <div className="hCard accent">
+              <span className="hDot lime" />
+              <code>hello@prerit.dev</code>
+              <small>Available Now</small>
+            </div>
           </div>
-          <div className="hCard">
-            <span className="hDot blue" />
-            <code>React · Next.js 15</code>
-            <small>Full Stack</small>
-          </div>
-          <div className="hCard accent">
-            <span className="hDot lime" />
-            <code>hello@prerit.dev</code>
-            <small>Available Now</small>
-          </div>
-        </div>
+        )}
       </section>
 
       {/* ── MACBOOK MOCKUP ── */}
