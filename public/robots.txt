@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://prerit.dev/sitemap.xml
