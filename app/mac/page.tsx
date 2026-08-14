@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { ArrowUpRight, ArrowUp, Github, Linkedin, Mail } from "lucide-react";
-import Chatbot from "../components/Chatbot";
+import Chatbot from "../../components/Chatbot";
 import { motion } from "framer-motion";
 
 const PROJECTS = [
