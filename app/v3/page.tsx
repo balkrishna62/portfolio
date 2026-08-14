@@ -1,188 +1,97 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import styles from "./v3.module.css";
+import "./v3.css";
+import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
+import { ArrowUpRight } from "lucide-react";
+import Chatbot from "../../components/Chatbot";
 
-const PROJECTS = [
-  { num: "01", title: "DigiNews", type: "Full Stack Platform" },
-  { num: "02", title: "Neko Customs", type: "E-Commerce & Branding" },
-  { num: "03", title: "ClampHook", type: "EdTech Interface" },
-  { num: "04", title: "Oasis App", type: "UI/UX Design" },
-];
+// Dynamically import the WebGL scene to strictly run on the client
+// This prevents Next.js from attempting to render 'window' or Three.js on the server
+const WebGLScene = dynamic(() => import("../../components/WebGLScene"), { 
+  ssr: false,
+  loading: () => <div style={{ position: "fixed", inset: 0, background: "#050505", zIndex: 0 }} />
+});
 
-const FAQS = [
-  { q: "Who is the best full stack developer in Nepal?", a: "Prerit is one of Nepal's leading full-stack developers, based in Kathmandu. Specializing in React, Next.js, Node.js, and MongoDB." },
-  { q: "Where can I hire a React or Next.js developer in Nepal?", a: "You can hire Prerit for freelance or consulting. Contact: hello@prerit.dev" },
-  { q: "What web development services are available?", a: "Full-stack web development, UI/UX design, brand identity, and custom software." },
-];
-
-export default function V3Page() {
-  const [activeSlide, setActiveSlide] = useState(0);
-  const macSectionRef = useRef<HTMLElement>(null);
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+export default function V3Home() {
+  const [projects, setProjects] = useState<any[]>([]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (!macSectionRef.current) return;
-      const { top, height } = macSectionRef.current.getBoundingClientRect();
-      const scrollY = -top; 
-      // The section is 400vh tall, sticky container is 100vh. 
-      // Scroll range is 300vh.
-      const maxScroll = window.innerHeight * 3;
-      if (scrollY >= 0 && scrollY <= maxScroll) {
-        const progress = scrollY / maxScroll;
-        // Map progress (0 to 1) to 3 slides (0, 1, 2)
-        const slide = Math.min(2, Math.floor(progress * 3));
-        setActiveSlide(slide);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    fetch("/api/projects").then(r => r.json()).then(d => { if (Array.isArray(d)) setProjects(d); }).catch(() => {});
   }, []);
 
   return (
-    <main className={styles.v3main}>
-      {/* NAV */}
-      <nav className={styles.nav}>
-        <div className={styles.logo}>PRERIT.</div>
-        <div className={styles.navLinks}>
-          <Link href="/">V1</Link>
-          <Link href="/v2">V2</Link>
+    <main className="v3-layout">
+      {/* 3D WebGL Background */}
+      <WebGLScene />
+
+      {/* Spatial UI Layer */}
+      <nav className="v3-nav">
+        <a href="#top" className="v3-logo">Prerit.</a>
+        <div className="v3-links">
+          <a href="#work">Work</a>
+          <a href="#about">About</a>
           <a href="#contact">Contact</a>
         </div>
       </nav>
 
-      {/* HERO */}
-      <section className={styles.hero}>
-        <span className={styles.label}>Nepal based</span>
-        <h1 className={styles.titleHuge}>Developer<br/>&amp; Designer</h1>
-        <div className={styles.heroBottom}>
-          <p className={styles.textLead}>
-            I build fast, beautiful web products — from code to brand. 
-            Focused on minimalist design and robust full-stack architecture.
+      <section id="top" className="v3-section">
+        <div style={{ maxWidth: 800 }}>
+          <h1 className="v3-hero-title">Crafting digital<br/>experiences.</h1>
+          <p className="v3-hero-subtitle">
+            I am a full-stack developer blending minimalist design with cutting-edge web technologies to build the future of the internet.
           </p>
-          <span className={styles.label}>Scroll to explore ↓</span>
-        </div>
-      </section>
-
-      {/* STICKY MACBOOK SECTION */}
-      <section ref={macSectionRef} className={styles.macSection}>
-        <div className={styles.macSticky}>
-          <div className={styles.macbook}>
-            <div className={styles.macScreen}>
-              <div className={styles.macUI}>
-                
-                <div className={styles.macSlide} data-active={activeSlide === 0}>
-                  <h3>Frontend Architecture</h3>
-                  <p>Building lightning fast, interactive interfaces using React and Next.js 15. Server components and modern hooks.</p>
-                  <ul>
-                    <li>React &amp; Next.js</li>
-                    <li>TypeScript</li>
-                    <li>Tailwind &amp; Vanilla CSS</li>
-                  </ul>
-                </div>
-
-                <div className={styles.macSlide} data-active={activeSlide === 1}>
-                  <h3>Backend Systems</h3>
-                  <p>Scalable APIs, secure authentication, and robust database models using Node.js and MongoDB.</p>
-                  <ul>
-                    <li>Node.js &amp; Express</li>
-                    <li>MongoDB (Mongoose)</li>
-                    <li>RESTful APIs &amp; JWTs</li>
-                  </ul>
-                </div>
-
-                <div className={styles.macSlide} data-active={activeSlide === 2}>
-                  <h3>Visual Design</h3>
-                  <p>Clean typography, huge negative space, and intuitive user experiences crafted in Figma.</p>
-                  <ul>
-                    <li>UI/UX Design</li>
-                    <li>Brand Identity</li>
-                    <li>Design Systems</li>
-                  </ul>
-                </div>
-
-              </div>
-              <div className={styles.macLogo}>MacBook Air</div>
-            </div>
-            <div className={styles.macBase} />
+          <div style={{ display: "flex", gap: 16 }}>
+            <a href="#work" className="v3-button">
+              Explore Work <ArrowUpRight size={16} />
+            </a>
+            <a href="#contact" className="v3-button outline">
+              Get in Touch
+            </a>
           </div>
         </div>
       </section>
 
-      {/* WORK / PROJECTS */}
-      <section className={styles.section}>
-        <span className={styles.label}>Selected Works</span>
-        <h2 className={styles.titleMedium}>Recent Projects</h2>
-        <div className={styles.workList}>
-          {PROJECTS.map(p => (
-            <div key={p.num} className={styles.workItem}>
-              <span className={styles.workNum}>{p.num}</span>
-              <span className={styles.workTitle}>{p.title}</span>
-              <span className={styles.workType}>{p.type}</span>
-              <span className={styles.workArrow}>↗</span>
+      <section id="work" className="v3-section">
+        <h2 className="v3-section-title">Selected Projects</h2>
+        
+        <div style={{ display: "grid", gap: 40 }}>
+          {projects.slice(0, 3).map((p, i) => (
+            <div key={p._id || i} className="v3-glass-card" style={{ display: "flex", gap: 40, flexWrap: "wrap", alignItems: "center" }}>
+              <div style={{ flex: 1, minWidth: 300 }}>
+                <h3 style={{ fontSize: 24, fontWeight: 500, margin: "0 0 12px" }}>{p.title}</h3>
+                <p style={{ color: "var(--v3-text-muted)", fontSize: 15, lineHeight: 1.6, margin: "0 0 24px" }}>{p.description}</p>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {p.tags?.map((t: string) => (
+                    <span key={t} style={{ fontSize: 12, padding: "4px 12px", background: "rgba(255,255,255,0.05)", borderRadius: 100, color: "var(--v3-text-muted)" }}>
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              
+              {p.image && (
+                <div style={{ flex: 1, minWidth: 300 }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={p.image} alt={p.title} style={{ width: "100%", borderRadius: 12, border: "1px solid var(--v3-border)" }} />
+                </div>
+              )}
             </div>
           ))}
         </div>
       </section>
 
-      {/* ABOUT & SERVICES */}
-      <section className={styles.section}>
-        <div className={styles.editorialGrid}>
-          <div>
-            <span className={styles.label}>About Me</span>
-            <h2 className={styles.titleMedium}>One brain.<br/>Two disciplines.</h2>
-          </div>
-          <div>
-            <p className={styles.textLead} style={{marginBottom: "60px"}}>
-              I'm Prerit — a developer & designer based in Kathmandu, Nepal. I work at the intersection of technology and visual design, ensuring products not only work flawlessly but look exceptional.
-            </p>
-            <div className={styles.servList}>
-              <div className={styles.servItem}>
-                <h4>Full Stack Dev</h4>
-                <p>End-to-end web applications built with modern JavaScript frameworks and robust backend architectures.</p>
-              </div>
-              <div className={styles.servItem}>
-                <h4>UI/UX Design</h4>
-                <p>Clean interfaces, design systems, and user flows that make complex products feel incredibly simple.</p>
-              </div>
-            </div>
-          </div>
+      <section id="contact" className="v3-section" style={{ minHeight: "80vh" }}>
+        <div className="v3-glass-card" style={{ maxWidth: 600, margin: "0 auto", textAlign: "center", padding: "80px 40px" }}>
+          <h2 style={{ fontSize: 32, fontWeight: 500, margin: "0 0 16px" }}>Ready to build?</h2>
+          <p style={{ color: "var(--v3-text-muted)", marginBottom: 40 }}>Let's create something extraordinary together.</p>
+          <a href="mailto:balpokharel62@gmail.com" className="v3-button" style={{ fontSize: 16, padding: "16px 32px" }}>
+            Start a Conversation
+          </a>
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className={styles.section}>
-        <span className={styles.label}>Information</span>
-        <h2 className={styles.titleMedium}>Common Questions</h2>
-        <div className={styles.faqContainer}>
-          {FAQS.map((f, i) => (
-            <div key={i}>
-              <div className={styles.faqRow} onClick={() => setOpenFaq(openFaq === i ? null : i)}>
-                <h4>{f.q}</h4>
-                <span className={styles.faqIcon}>{openFaq === i ? "−" : "+"}</span>
-              </div>
-              <div className={styles.faqAns} style={{ height: openFaq === i ? "100px" : "0" }}>
-                <p style={{ padding: "16px 0" }}>{f.a}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* CONTACT */}
-      <section id="contact" className={styles.section} style={{ borderBottom: "none", paddingBottom: "80px" }}>
-        <span className={styles.label}>Get in touch</span>
-        <a href="mailto:hello@prerit.dev" className={styles.contactGiant}>
-          hello@prerit.dev
-        </a>
-        <p className={styles.textLead}>
-          Available for freelance, full-time, and creative collaborations worldwide.
-        </p>
-      </section>
-
+      <Chatbot />
     </main>
   );
 }

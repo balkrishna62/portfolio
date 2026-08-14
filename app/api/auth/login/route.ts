@@ -13,20 +13,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
     }
 
-    await connectDB();
-
-    // Check env-based admin first (no DB needed for initial setup)
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@prerit.dev';
     const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
 
     let isValid = false;
     let adminName = 'Admin';
 
+    // Check env-based admin FIRST (no DB needed)
     if (email === adminEmail) {
       isValid = password === adminPassword;
       adminName = 'Prerit';
     } else {
-      // Check DB admin
+      // Only connect to DB if it's not the hardcoded admin
+      await connectDB();
       const admin = await Admin.findOne({ email });
       if (admin) {
         isValid = await bcrypt.compare(password, admin.password);

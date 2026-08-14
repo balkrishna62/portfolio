@@ -22,7 +22,7 @@ export default function AdminProjects() {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
 
-  const load = () => fetch("/api/projects").then(r => r.json()).then(setProjects);
+  const load = () => fetch("/api/projects").then(r => r.json()).then(data => setProjects(Array.isArray(data) ? data : []));
   useEffect(() => { load(); }, []);
 
   const save = async (e: React.FormEvent) => {

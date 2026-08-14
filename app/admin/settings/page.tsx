@@ -83,14 +83,14 @@ export default function AdminSettings() {
         <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 12, padding: 24 }}>
           <h2 style={{ fontSize: 16, fontWeight: 700, margin: "0 0 8px" }}>Floating Hero Image</h2>
           <p style={{ fontSize: 13, color: "#64748b", margin: "0 0 16px" }}>Paste a direct image URL to display it as a floating frame on the homepage.</p>
-          <div style={{ display: "flex", gap: 8 }}>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <input 
               type="url" 
               placeholder="https://example.com/photo.jpg"
               value={heroImage}
               onChange={(e) => setHeroImage(e.target.value)}
               disabled={loading}
-              style={{ flex: 1, padding: "8px 12px", borderRadius: 6, border: "1px solid #cbd5e1", fontSize: 13 }}
+              style={{ flex: 1, padding: "8px 12px", borderRadius: 6, border: "1px solid #cbd5e1", fontSize: 13, minWidth: 200 }}
             />
             <button 
               onClick={handleSaveHero}
@@ -99,6 +99,25 @@ export default function AdminSettings() {
             >
               Save
             </button>
+          </div>
+          <div style={{ display: "flex", gap: 12, marginTop: 12, alignItems: "center", borderTop: "1px solid #e2e8f0", paddingTop: 12 }}>
+            <span style={{ fontSize: 13, color: "#64748b", fontWeight: 500 }}>OR upload from PC:</span>
+            <input 
+              type="file" 
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onload = (ev) => {
+                    if (ev.target?.result) setHeroImage(ev.target.result as string);
+                  };
+                  reader.readAsDataURL(file);
+                }
+              }}
+              disabled={loading}
+              style={{ fontSize: 13 }}
+            />
           </div>
           {heroImage && (
             <div style={{ marginTop: 16 }}>

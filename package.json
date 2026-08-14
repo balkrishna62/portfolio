@@ -9,21 +9,32 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-three/drei": "^10.7.8",
+    "@react-three/fiber": "^9.7.0",
+    "@react-three/postprocessing": "^3.0.5",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
+    "framer-motion": "^13.1.0",
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.468.0",
+    "matter-js": "^0.20.0",
     "mongoose": "^9.9.2",
     "next": "^15.5.0",
+    "nodemailer": "^9.0.5",
+    "postprocessing": "^6.39.4",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "three": "^0.185.1"
   },
   "devDependencies": {
+    "@types/matter-js": "^0.20.2",
     "@types/node": "^22.10.0",
+    "@types/nodemailer": "^8.0.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@types/three": "^0.185.4",
     "typescript": "^5.7.0"
   }
 }

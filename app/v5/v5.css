@@ -1,0 +1,214 @@
+/* V5 Simple but Creative */
+
+:root {
+  --v5-bg: #0a0a0c;
+  --v5-text: #ffffff;
+  --v5-text-muted: #8b949e;
+  --v5-accent: #06b6d4;
+  --v5-border: rgba(255, 255, 255, 0.08);
+  --v5-card-bg: rgba(255, 255, 255, 0.02);
+}
+
+/* Hide default cursor to use the CustomCursor */
+html, body {
+  cursor: none;
+}
+
+body {
+  margin: 0;
+  background-color: var(--v5-bg);
+  color: var(--v5-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Re-enable cursor for interactive elements just in case, though CustomCursor handles it visually */
+a, button, input, textarea {
+  cursor: none;
+}
+
+.v5-layout {
+  position: relative;
+  width: 100%;
+}
+
+.v5-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6vw;
+  z-index: 100;
+  background: rgba(10, 10, 12, 0.8);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--v5-border);
+}
+
+.v5-logo {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  text-decoration: none;
+  color: #fff;
+}
+
+.v5-links {
+  display: flex;
+  gap: 40px;
+}
+
+.v5-links a {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--v5-text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.v5-links a:hover {
+  color: #fff;
+}
+
+.v5-section {
+  padding: 120px 6vw;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+
+/* Typography */
+.v5-hero-title {
+  font-size: clamp(48px, 8vw, 100px);
+  font-weight: 800;
+  letter-spacing: -2px;
+  line-height: 1.1;
+  margin: 0 0 24px;
+  max-width: 800px;
+}
+
+.v5-hero-subtitle {
+  font-size: 20px;
+  color: var(--v5-text-muted);
+  font-weight: 400;
+  line-height: 1.6;
+  max-width: 500px;
+  margin: 0 0 48px;
+}
+
+.v5-section-title {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin-bottom: 60px;
+}
+
+/* Elegant Cards */
+.v5-card-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.v5-card {
+  display: flex;
+  gap: 60px;
+  align-items: center;
+  background: var(--v5-card-bg);
+  border: 1px solid var(--v5-border);
+  border-radius: 24px;
+  padding: 60px;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
+  transform-style: preserve-3d;
+}
+
+.v5-card:hover {
+  transform: translateY(-10px) rotateX(2deg) rotateY(-2deg);
+  box-shadow: 20px 40px 60px rgba(0,0,0,0.4);
+  border-color: rgba(255,255,255,0.15);
+}
+
+.v5-card-content {
+  flex: 1;
+  min-width: 300px;
+  transform: translateZ(30px); /* Pops content out on hover due to preserve-3d */
+}
+
+.v5-card-image {
+  flex: 1;
+  min-width: 300px;
+  transform: translateZ(40px);
+}
+
+.v5-card-image img {
+  width: 100%;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+/* Magnetic Button (CSS implementation approximation) */
+.v5-button {
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 100px;
+  padding: 18px 36px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s;
+}
+
+.v5-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(255,255,255,0.1);
+}
+
+.v5-button.outline {
+  background: transparent;
+  color: #fff;
+  border: 1px solid var(--v5-border);
+}
+
+.v5-button.outline:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+/* Clean Marquee */
+.v5-marquee {
+  display: flex;
+  overflow: hidden;
+  user-select: none;
+  gap: 40px;
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  padding: 40px 0;
+  border-top: 1px solid var(--v5-border);
+  border-bottom: 1px solid var(--v5-border);
+}
+
+.v5-marquee-content {
+  display: flex;
+  flex-shrink: 0;
+  gap: 80px;
+  justify-content: space-around;
+  min-width: 100%;
+  animation: scroll 20s linear infinite;
+}
+
+.v5-marquee-item {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--v5-text-muted);
+  letter-spacing: -0.5px;
+}
+
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-100% - 40px)); }
+}

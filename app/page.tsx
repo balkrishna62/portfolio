@@ -13,7 +13,7 @@ const PROJECTS = [
 
 const FAQS = [
   { q: "Who is the best full stack developer in Nepal?", a: "Prerit is one of Nepal's leading full-stack developers, based in Kathmandu. Specializing in React, Next.js, Node.js, and MongoDB — building modern web products for clients in Nepal and worldwide." },
-  { q: "Where can I hire a React or Next.js developer in Nepal?", a: "You can hire Prerit — a professional React and Next.js developer based in Kathmandu. Available for freelance, full-time, and consulting. Contact: hello@prerit.dev" },
+  { q: "Where can I hire a React or Next.js developer in Nepal?", a: "You can hire Prerit — a professional React and Next.js developer based in Kathmandu. Available for freelance, full-time, and consulting. Contact: balpokharel62@gmail.com" },
   { q: "What web development services are available?", a: "Full-stack web development, UI/UX design, graphic design, brand identity, SEO-optimized websites, and e-commerce — all from Kathmandu, Nepal." },
   { q: "What technologies does Prerit use?", a: "React, Next.js 15, Node.js, MongoDB, TypeScript, PostgreSQL, Figma, and Adobe Creative Suite — a complete stack from design to deployment." },
   { q: "Is Prerit available for international clients?", a: "Yes. Prerit works with clients worldwide while based in Kathmandu. Full remote delivery with clear communication and on-time shipping." },
@@ -73,21 +73,30 @@ export default function Home() {
     } catch { setFormState("error"); }
   };
 
+  // Filter logic
+  const webProjects = projects.filter(p => !p.type?.toLowerCase().includes("graphic") && !p.type?.toLowerCase().includes("design"));
+  const graphicProjects = projects.filter(p => p.type?.toLowerCase().includes("graphic") || p.type?.toLowerCase().includes("design"));
+
   return (
     <main className="v2-page">
+      {/* Creative Background Elements */}
+      <div className="bg-glow-1" />
+      <div className="bg-glow-2" />
+      <div className="bg-grid" />
+      
       <style jsx global>{`
         .v2-page {
-          --surface: #ffffff;
+          --surface: #161b22;
         }
         .v2-page .projCard, .v2-page .servItem, .v2-page .faqItem, .v2-page .hCard {
-          background: #ffffff;
-          border: 1px solid #e2e8f0;
+          background: #161b22;
+          border: 1px solid #30363d;
           transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
         }
         .v2-page .projCard:hover, .v2-page .servItem:hover, .v2-page .hCard:hover {
           transform: translateY(-6px);
-          box-shadow: 0 16px 32px rgba(0, 0, 0, 0.04);
-          border-color: #cbd5e1;
+          box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+          border-color: #8b949e;
         }
         .v2-page .faqItem {
           border-radius: 16px;
@@ -95,8 +104,8 @@ export default function Home() {
           padding: 0 24px;
         }
         .v2-page .faqItem:hover {
-          border-color: #cbd5e1;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
+          border-color: #8b949e;
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
         }
       `}</style>
 
@@ -130,12 +139,11 @@ export default function Home() {
       <section id="top" className="hero" style={{ overflow: "hidden", position: "relative" }}>
         <div className="heroLeft" style={{ position: "relative", zIndex: 10 }}>
           <h1>
-            Full Stack<br />
-            Developer &amp;<br />
-            <em>Designer.</em>
+            Bal Krishna<br />
+            <em>Pokharel.</em>
           </h1>
           <p className="heroSub">
-            I build fast, beautiful web products — from code to brand.<br />
+            Full-Stack Developer &amp; Graphic Designer crafting digital perfection in Kathmandu, Nepal.<br />
             Available for freelance projects worldwide.
           </p>
           <div className="heroBtns">
@@ -168,22 +176,24 @@ export default function Home() {
             <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.2), transparent)", pointerEvents: "none" }} />
           </motion.div>
         ) : (
-          <div className="heroCards" aria-hidden>
-            <div className="hCard">
-              <span className="hDot green" />
-              <code>npm run build</code>
-              <small>✓ Compiled in 3.2s</small>
+          <div className="code-window">
+            <div className="code-header">
+              <span className="code-r"/><span className="code-y"/><span className="code-g"/>
             </div>
-            <div className="hCard">
-              <span className="hDot blue" />
-              <code>React · Next.js 15</code>
-              <small>Full Stack</small>
-            </div>
-            <div className="hCard accent">
-              <span className="hDot lime" />
-              <code>hello@prerit.dev</code>
-              <small>Available Now</small>
-            </div>
+            <pre className="code-body">
+              <span style={{ color: '#c678dd' }}>const</span> <span style={{ color: '#e5c07b' }}>Developer</span> = () =&gt; {'{\n'}
+              {'  '}<span style={{ color: '#c678dd' }}>return</span> {'(\n'}
+              {'    '}&lt;<span style={{ color: '#e06c75' }}>CreativeSpace</span>&gt;
+              <br/>
+              {'      '}&lt;<span style={{ color: '#e06c75' }}>Code</span>&gt;Architecting digital logic&lt;/<span style={{ color: '#e06c75' }}>Code</span>&gt;
+              <br/>
+              {'      '}&lt;<span style={{ color: '#e06c75' }}>Design</span>&gt;Minimalistic aesthetics&lt;/<span style={{ color: '#e06c75' }}>Design</span>&gt;
+              <br/>
+              {'    '}&lt;/<span style={{ color: '#e06c75' }}>CreativeSpace</span>&gt;
+              <br/>
+              {'  )\n'}
+              {'};'}
+            </pre>
           </div>
         )}
       </section>
@@ -281,52 +291,96 @@ export default function Home() {
 
       {/* ── WORK ── */}
       <section id="work" className="section">
-        <div className="secHead">
+        <div className="secHead" style={{ margin: '0 auto 60px', textAlign: 'center' }}>
           <div>
-            <h2>Selected<br /><em>Projects</em></h2>
+            <h2>Selected <em>Projects</em></h2>
           </div>
-          <p>From full-stack products to visual identities — built with craft and clarity.</p>
+          <p style={{ margin: '16px auto 0' }}>From full-stack products to visual identities — built with craft and clarity.</p>
         </div>
-        <div className="projGrid">
-          {projects.map(p => (
-            <article key={p.id || p.num} className="projCard">
-              <div className="projVisual" style={{ padding: p.image ? 0 : undefined, overflow: 'hidden' }}>
-                {p.image ? (
-                  <img src={p.image} alt={p.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                ) : (
-                  <>
-                    <span className="projNum">{p.num}</span>
-                    <div className="projOrb" />
-                  </>
-                )}
-              </div>
-              <div className="projInfo">
-                <small>{p.type}</small>
-                <h3 style={{ display: p.url ? "block" : "flex" }}>
-                  {p.url ? (
-                    <a href={p.url} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      {p.title} <ArrowUpRight size={17} />
-                    </a>
-                  ) : (
-                    <>{p.title} <ArrowUpRight size={17} /></>
-                  )}
-                </h3>
-                <p>{p.desc}</p>
-                <div className="projTags">
-                  {p.tags.map((t: string) => <span key={t}>{t}</span>)}
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
+
+        {webProjects.length > 0 && (
+          <div style={{ marginBottom: graphicProjects.length > 0 ? 80 : 0 }}>
+            <h3 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text)', marginBottom: 24, paddingLeft: 12, borderLeft: '4px solid var(--accent)', letterSpacing: '0.5px' }}>WEB DEVELOPMENT</h3>
+            <div className="projGrid">
+              {webProjects.map(p => (
+                <article key={p.id || p.num} className="projCard">
+                  <div className="projVisual" style={{ padding: p.image ? 0 : undefined, overflow: 'hidden' }}>
+                    {p.image ? (
+                      <img src={p.image} alt={p.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    ) : (
+                      <>
+                        <span className="projNum">{p.num}</span>
+                        <div className="projOrb" />
+                      </>
+                    )}
+                  </div>
+                  <div className="projInfo">
+                    <small>{p.type}</small>
+                    <h3 style={{ display: p.url ? "block" : "flex" }}>
+                      {p.url ? (
+                        <a href={p.url} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          {p.title} <ArrowUpRight size={17} />
+                        </a>
+                      ) : (
+                        <>{p.title} <ArrowUpRight size={17} /></>
+                      )}
+                    </h3>
+                    <p>{p.desc}</p>
+                    <div className="projTags">
+                      {p.tags.map((t: string) => <span key={t}>{t}</span>)}
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {graphicProjects.length > 0 && (
+          <div>
+            <h3 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text)', marginBottom: 24, paddingLeft: 12, borderLeft: '4px solid #8b5cf6', letterSpacing: '0.5px' }}>GRAPHIC DESIGN</h3>
+            <div className="projGrid">
+              {graphicProjects.map(p => (
+                <article key={p.id || p.num} className="projCard">
+                  <div className="projVisual" style={{ padding: p.image ? 0 : undefined, overflow: 'hidden' }}>
+                    {p.image ? (
+                      <img src={p.image} alt={p.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    ) : (
+                      <>
+                        <span className="projNum">{p.num}</span>
+                        <div className="projOrb" style={{ background: 'linear-gradient(135deg, #8b5cf6, #c4b5fd)' }} />
+                      </>
+                    )}
+                  </div>
+                  <div className="projInfo">
+                    <small style={{ color: '#8b5cf6' }}>{p.type}</small>
+                    <h3 style={{ display: p.url ? "block" : "flex" }}>
+                      {p.url ? (
+                        <a href={p.url} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          {p.title} <ArrowUpRight size={17} />
+                        </a>
+                      ) : (
+                        <>{p.title} <ArrowUpRight size={17} /></>
+                      )}
+                    </h3>
+                    <p>{p.desc}</p>
+                    <div className="projTags">
+                      {p.tags.map((t: string) => <span key={t}>{t}</span>)}
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
 
       {/* ── SERVICES ── */}
       <section id="services" className="servSection">
         <div className="section">
-          <div className="secHead">
+          <div className="secHead" style={{ margin: '0 auto 60px', textAlign: 'center' }}>
             <div>
-              <h2>What I<br /><em>Do</em></h2>
+              <h2>What I <em>Do</em></h2>
             </div>
           </div>
           <div className="servGrid">
@@ -347,9 +401,9 @@ export default function Home() {
 
       {/* ── SKILLS ── */}
       <section id="skills" className="section">
-        <div className="secHead">
+        <div className="secHead" style={{ margin: '0 auto 60px', textAlign: 'center' }}>
           <div>
-            <h2>Core<br /><em>Stack</em></h2>
+            <h2>Core <em>Stack</em></h2>
           </div>
         </div>
         <div className="servGrid">
@@ -360,12 +414,12 @@ export default function Home() {
             { _id: '4', category: "Design", skills: ["Figma", "UI/UX", "Brand Identity", "Adobe CC"] }
           ]).map(s => (
             <div key={s._id} className="servItem">
-              <span className="servN" style={{ marginBottom: 24 }}>{s.category}</span>
-              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", fontSize: 16, color: "#1e293b", lineHeight: 1.8, fontWeight: 500 }}>
+              <span className="servN" style={{ marginBottom: 24, color: "#fff" }}>{s.category}</span>
+              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", fontSize: 16, color: "#cbd5e1", lineHeight: 1.8, fontWeight: 500 }}>
                 {s.skills.map((t: string, i: number) => (
                   <span key={i} style={{ display: "flex", alignItems: "center", whiteSpace: "nowrap" }}>
                     {t}
-                    {i < s.skills.length - 1 && <span style={{ color: "#cbd5e1", margin: "0 12px" }}>•</span>}
+                    {i < s.skills.length - 1 && <span style={{ color: "#475569", margin: "0 12px" }}>•</span>}
                   </span>
                 ))}
               </div>
@@ -384,11 +438,10 @@ export default function Home() {
 
       {/* ── FAQ ── */}
       <section id="faq" className="section">
-        <div className="secHead">
+        <div className="secHead" style={{ margin: '0 auto 60px', textAlign: 'center' }}>
           <div>
-            <h2>Common<br /><em>Questions</em></h2>
+            <h2>Common <em>Questions</em></h2>
           </div>
-          <p>Quick answers — targeting Google's featured snippets.</p>
         </div>
         <div className="faqList">
           {FAQS.map((f, i) => (
@@ -410,13 +463,13 @@ export default function Home() {
         <div className="contactLeft">
           <h2>Let&apos;s build<br /><em>something.</em></h2>
           <p>Available for freelance, full-time, and creative collaborations — in Nepal and worldwide.</p>
-          <a href="mailto:hello@prerit.dev" className="contactMail">
-            hello@prerit.dev <ArrowUpRight size={16} />
+          <a href="mailto:balpokharel62@gmail.com" className="contactMail">
+            balpokharel62@gmail.com <ArrowUpRight size={16} />
           </a>
           <div className="socialRow">
             <a href="https://github.com/" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><Github size={18} /></a>
             <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><Linkedin size={18} /></a>
-            <a href="mailto:hello@prerit.dev" aria-label="Email"><Mail size={18} /></a>
+            <a href="mailto:balpokharel62@gmail.com" aria-label="Email"><Mail size={18} /></a>
           </div>
         </div>
         <form className="contactForm" onSubmit={handleContact}>

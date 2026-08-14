@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import { Contact } from '@/lib/models/Contact';
+import { sendEmailNotification } from '@/lib/mailer';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-change-in-production';
@@ -13,13 +14,32 @@ function isAdmin(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    await connectDB();
     const { name, email, subject, message } = await req.json();
     if (!name || !email || !message) {
       return NextResponse.json({ error: 'Name, email and message are required' }, { status: 400 });
     }
-    const contact = await Contact.create({ name, email, subject, message });
-    return NextResponse.json({ success: true, id: contact._id }, { status: 201 });
+
+    // Try to save to Database, but don't fail if DB is unreachable
+    let dbId = null;
+    try {
+      await connectDB();
+      const contact = await Contact.create({ name, email, subject, message });
+      dbId = contact._id;
+    } catch (dbError) {
+      console.warn("Database unavailable, skipping DB save for contact form.");
+    }
+    
+    // Send email via Nodemailer SMTP
+    try {
+      await sendEmailNotification(
+        `New Portfolio Contact: ${subject || 'No Subject'}`,
+        `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
+      );
+    } catch (err) {
+      console.error("SMTP error:", err);
+    }
+
+    return NextResponse.json({ success: true, id: dbId }, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to submit' }, { status: 500 });
   }

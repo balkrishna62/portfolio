@@ -2,10 +2,15 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
+export const dynamic = 'force-dynamic';
+
 async function getPost(slug: string) {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/blog/${slug}`, { next: { revalidate: 60 } });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const res = await fetch(`${baseUrl}/api/blog/${slug}`, { next: { revalidate: 60 }, signal: controller.signal });
+    clearTimeout(timeoutId);
     if (!res.ok) return null;
     return res.json();
   } catch { return null; }

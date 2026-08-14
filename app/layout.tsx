@@ -120,7 +120,7 @@ const personSchema = {
     "Nepal's #1 full-stack developer and graphic designer based in Kathmandu. Expert in React, Next.js, Node.js, and MongoDB with years of experience building digital products.",
   url: BASE,
   image: `${BASE}/og-image.png`,
-  email: "hello@prerit.dev",
+  email: "balpokharel62@gmail.com",
   knowsAbout: [
     "React",
     "Next.js",
@@ -187,7 +187,7 @@ const localBusinessSchema = {
   description:
     "Professional full-stack web development and graphic design services in Nepal. Serving clients in Kathmandu and worldwide.",
   url: BASE,
-  email: "hello@prerit.dev",
+  email: "balpokharel62@gmail.com",
   image: `${BASE}/og-image.png`,
   priceRange: "$$",
   currenciesAccepted: "NPR, USD",
@@ -250,7 +250,7 @@ const faqSchema = {
       name: "Where can I hire a React developer in Nepal?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "You can hire Prerit, a professional React and Next.js developer based in Kathmandu, Nepal. Prerit is available for freelance projects, full-time engagements, and consulting. Contact via hello@prerit.dev.",
+        text: "You can hire Prerit, a professional React and Next.js developer based in Kathmandu, Nepal. Prerit is available for freelance projects, full-time engagements, and consulting. Contact via balpokharel62@gmail.com.",
       },
     },
     {
@@ -266,7 +266,7 @@ const faqSchema = {
       name: "Is Prerit available for freelance web development in Nepal?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes, Prerit is available for freelance web development, design projects, and creative collaborations in Nepal and worldwide. Reach out at hello@prerit.dev to discuss your project.",
+        text: "Yes, Prerit is available for freelance web development, design projects, and creative collaborations in Nepal and worldwide. Reach out at balpokharel62@gmail.com to discuss your project.",
       },
     },
     {

@@ -1,0 +1,147 @@
+/* V3 Ultra-Minimalist Spatial UI */
+:root {
+  --v3-text: #ffffff;
+  --v3-text-muted: rgba(255, 255, 255, 0.5);
+  --v3-glass: rgba(10, 10, 10, 0.2);
+  --v3-border: rgba(255, 255, 255, 0.08);
+}
+
+body {
+  margin: 0;
+  background: #000;
+  color: var(--v3-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Ensure content sits above WebGL Canvas (z-index 0) */
+.v3-layout {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.v3-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5vw;
+  z-index: 100;
+  border-bottom: 1px solid var(--v3-border);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+}
+
+.v3-logo {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  text-decoration: none;
+  color: #fff;
+}
+
+.v3-links {
+  display: flex;
+  gap: 32px;
+}
+
+.v3-links a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--v3-text-muted);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.v3-links a:hover {
+  color: #fff;
+}
+
+/* Perfect Spatial Glass Cards */
+.v3-glass-card {
+  background: var(--v3-glass);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid var(--v3-border);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.v3-glass-card:hover {
+  background: rgba(20, 20, 20, 0.3);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Typography */
+.v3-hero-title {
+  font-size: clamp(48px, 6vw, 80px);
+  font-weight: 600;
+  letter-spacing: -2px;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.v3-hero-subtitle {
+  font-size: 20px;
+  color: var(--v3-text-muted);
+  font-weight: 400;
+  line-height: 1.6;
+  max-width: 500px;
+  margin: 24px 0 48px;
+}
+
+/* Sections */
+.v3-section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 10vw;
+  position: relative;
+}
+
+.v3-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--v3-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 60px;
+}
+
+/* UI Elements */
+.v3-button {
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 100px;
+  padding: 14px 28px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.v3-button:hover {
+  transform: scale(1.02);
+}
+
+.v3-button.outline {
+  background: transparent;
+  color: #fff;
+  border: 1px solid var(--v3-border);
+}
+
+.v3-button.outline:hover {
+  background: rgba(255,255,255,0.05);
+}

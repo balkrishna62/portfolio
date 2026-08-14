@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Blog — Prerit | Web Development & Design Insights from Nepal",
   description: "Articles about web development, React, Next.js, UI/UX design and the tech scene in Nepal by Prerit.",
@@ -12,7 +14,10 @@ export const metadata: Metadata = {
 async function getPosts() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/blog`, { next: { revalidate: 60 } });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const res = await fetch(`${baseUrl}/api/blog`, { next: { revalidate: 60 }, signal: controller.signal });
+    clearTimeout(timeoutId);
     if (!res.ok) return [];
     return res.json();
   } catch { return []; }

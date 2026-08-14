@@ -63,7 +63,7 @@ export default function AdminLogin() {
                 border: "1px solid #cbd5e1", borderRadius: 8, color: "#1e293b",
                 fontSize: 14, outline: "none", boxSizing: "border-box"
               }}
-              placeholder="admin@prerit.dev"
+              placeholder=""
             />
           </div>
 
