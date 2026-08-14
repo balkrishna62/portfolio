@@ -40,28 +40,36 @@ export default function AdminSettings() {
     reader.readAsDataURL(file);
   };
 
-  const [heroImage, setHeroImage] = useState("");
+  const [formData, setFormData] = useState({
+    heroImage: "",
+    heroTitle: "Bal Krishna\\nPokharel.",
+    heroSubtitle: "Full-Stack Developer & Designer crafting digital perfection in Kathmandu, Nepal.",
+    aboutTitle: "One brain. Two disciplines.",
+    aboutText: "I am a developer & designer based in Kathmandu, Nepal. I work at the intersection of technology and visual design.\\n\\nI care about the details: button spacing, animation rhythm, API structure, and the feeling a brand leaves behind.",
+    contactTitle: "Let's Build.",
+    contactSubtitle: "Ready to create something extraordinary together?"
+  });
 
   // Load existing settings
   useEffect(() => {
     fetch("/api/settings").then(r => r.json()).then(d => {
-      if (d && d.heroImage) setHeroImage(d.heroImage);
+      if (d && !d.error) setFormData(prev => ({ ...prev, ...d }));
     });
   }, []);
 
-  const handleSaveHero = async () => {
+  const handleSave = async () => {
     setLoading(true);
-    setMessage("Saving hero image...");
+    setMessage("Saving site details...");
     try {
       const res = await fetch("/api/settings", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ heroImage })
+        body: JSON.stringify(formData)
       });
-      if (res.ok) setMessage("Hero image updated! Refresh the homepage.");
-      else setMessage("Failed to update hero image.");
+      if (res.ok) setMessage("Site details updated! Refresh the homepage.");
+      else setMessage("Failed to update site details.");
     } catch {
-      setMessage("Error saving hero image.");
+      setMessage("Error saving site details.");
     }
     setLoading(false);
   };
@@ -79,52 +87,128 @@ export default function AdminSettings() {
 
       <div style={{ display: "grid", gap: 24, maxWidth: 600 }}>
         
-        {/* Hero Image URL */}
+        {/* Global Settings & Text Content */}
         <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 12, padding: 24 }}>
-          <h2 style={{ fontSize: 16, fontWeight: 700, margin: "0 0 8px" }}>Floating Hero Image</h2>
-          <p style={{ fontSize: 13, color: "#64748b", margin: "0 0 16px" }}>Paste a direct image URL to display it as a floating frame on the homepage.</p>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            <input 
-              type="url" 
-              placeholder="https://example.com/photo.jpg"
-              value={heroImage}
-              onChange={(e) => setHeroImage(e.target.value)}
-              disabled={loading}
-              style={{ flex: 1, padding: "8px 12px", borderRadius: 6, border: "1px solid #cbd5e1", fontSize: 13, minWidth: 200 }}
-            />
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+            <div>
+              <h2 style={{ fontSize: 18, fontWeight: 700, margin: "0 0 4px" }}>Site Text Content</h2>
+              <p style={{ fontSize: 13, color: "#64748b", margin: 0 }}>Customize the main text blocks on your homepage.</p>
+            </div>
             <button 
-              onClick={handleSaveHero}
+              onClick={handleSave}
               disabled={loading}
-              style={{ padding: "8px 16px", background: "#0f172a", color: "white", border: "none", borderRadius: 6, fontSize: 13, fontWeight: 500, cursor: loading ? "not-allowed" : "pointer" }}
+              style={{ padding: "10px 20px", background: "#0f172a", color: "white", border: "none", borderRadius: 6, fontSize: 14, fontWeight: 600, cursor: loading ? "not-allowed" : "pointer" }}
             >
-              Save
+              Save All Details
             </button>
           </div>
-          <div style={{ display: "flex", gap: 12, marginTop: 12, alignItems: "center", borderTop: "1px solid #e2e8f0", paddingTop: 12 }}>
-            <span style={{ fontSize: 13, color: "#64748b", fontWeight: 500 }}>OR upload from PC:</span>
-            <input 
-              type="file" 
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = (ev) => {
-                    if (ev.target?.result) setHeroImage(ev.target.result as string);
-                  };
-                  reader.readAsDataURL(file);
-                }
-              }}
-              disabled={loading}
-              style={{ fontSize: 13 }}
-            />
-          </div>
-          {heroImage && (
-            <div style={{ marginTop: 16 }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={heroImage} alt="Preview" style={{ width: 120, height: 120, objectFit: "cover", borderRadius: 8, border: "1px solid #e2e8f0" }} />
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {/* Hero Section */}
+            <div>
+              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Hero Title (Use \n for line breaks)</label>
+              <textarea 
+                value={formData.heroTitle}
+                onChange={e => setFormData({ ...formData, heroTitle: e.target.value })}
+                style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: "1px solid #cbd5e1", fontSize: 13, minHeight: 60 }}
+              />
             </div>
-          )}
+            <div>
+              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Hero Subtitle</label>
+              <input 
+                type="text"
+                value={formData.heroSubtitle}
+                onChange={e => setFormData({ ...formData, heroSubtitle: e.target.value })}
+                style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: "1px solid #cbd5e1", fontSize: 13 }}
+              />
+            </div>
+
+            <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '8px 0' }} />
+
+            {/* About Section */}
+            <div>
+              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 4 }}>About Title (Next to Image)</label>
+              <input 
+                type="text"
+                value={formData.aboutTitle}
+                onChange={e => setFormData({ ...formData, aboutTitle: e.target.value })}
+                style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: "1px solid #cbd5e1", fontSize: 13 }}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 4 }}>About Text (Use \n\n for paragraphs)</label>
+              <textarea 
+                value={formData.aboutText}
+                onChange={e => setFormData({ ...formData, aboutText: e.target.value })}
+                style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: "1px solid #cbd5e1", fontSize: 13, minHeight: 100 }}
+              />
+            </div>
+
+            <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '8px 0' }} />
+
+            {/* Contact Section */}
+            <div>
+              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Contact Title</label>
+              <input 
+                type="text"
+                value={formData.contactTitle}
+                onChange={e => setFormData({ ...formData, contactTitle: e.target.value })}
+                style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: "1px solid #cbd5e1", fontSize: 13 }}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Contact Subtitle</label>
+              <input 
+                type="text"
+                value={formData.contactSubtitle}
+                onChange={e => setFormData({ ...formData, contactSubtitle: e.target.value })}
+                style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: "1px solid #cbd5e1", fontSize: 13 }}
+              />
+            </div>
+            
+            <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '8px 0' }} />
+
+            {/* Hero Image URL */}
+            <div>
+              <h3 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 8px" }}>Floating Profile Image</h3>
+              <p style={{ fontSize: 12, color: "#64748b", margin: "0 0 12px" }}>Upload from your device or paste a URL to display next to the About text.</p>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+                <input 
+                  type="url" 
+                  placeholder="https://example.com/photo.jpg"
+                  value={formData.heroImage}
+                  onChange={(e) => setFormData({ ...formData, heroImage: e.target.value })}
+                  disabled={loading}
+                  style={{ flex: 1, padding: "8px 12px", borderRadius: 6, border: "1px solid #cbd5e1", fontSize: 13, minWidth: 200 }}
+                />
+              </div>
+              <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                <span style={{ fontSize: 13, color: "#64748b", fontWeight: 500 }}>Upload file:</span>
+                <input 
+                  type="file" 
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (ev) => {
+                        if (ev.target?.result) setFormData({ ...formData, heroImage: ev.target.result as string });
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                  disabled={loading}
+                  style={{ fontSize: 13 }}
+                />
+              </div>
+              {formData.heroImage && (
+                <div style={{ marginTop: 16 }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={formData.heroImage} alt="Preview" style={{ width: 120, height: 120, objectFit: "cover", borderRadius: 8, border: "1px solid #e2e8f0" }} />
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Favicon Upload */}

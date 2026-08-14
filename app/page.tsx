@@ -1,510 +1,270 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { ArrowUpRight, ArrowUp, Github, Linkedin, Mail } from "lucide-react";
+import "./v1/v4.css";
+import dynamic from "next/dynamic";
 import Chatbot from "../components/Chatbot";
-import { motion } from "framer-motion";
+import { ArrowUpRight, Home, Grid, Code, Mail } from "lucide-react";
+import { useState, useEffect } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 
-const PROJECTS = [
-  { num: "01", title: "DigiNews", type: "Full Stack / Product", desc: "Modern news platform with a React interface, Node.js backend and database-driven content pipeline.", tags: ["React", "Node.js", "MySQL"] },
-  { num: "02", title: "Neko Customs", type: "Brand & Web Design", desc: "Digital identity and storefront built around visual storytelling and conversion-focused design.", tags: ["Branding", "UI/UX", "Web"] },
-  { num: "03", title: "ClampHook", type: "Education / Creative", desc: "Marketing visuals and digital experiences for a Nepal-based entrance-exam preparation platform.", tags: ["Creative", "Web", "Design"] },
-];
+const V4Scene = dynamic(() => import("../components/V4Scene"), { 
+  ssr: false,
+  loading: () => <div style={{ position: "fixed", inset: 0, background: "#020204", zIndex: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "#06b6d4", fontFamily: "monospace" }}>INITIALIZING DIGITAL CORE...</div>
+});
 
-const FAQS = [
-  { q: "Who is the best full stack developer in Nepal?", a: "Prerit is one of Nepal's leading full-stack developers, based in Kathmandu. Specializing in React, Next.js, Node.js, and MongoDB — building modern web products for clients in Nepal and worldwide." },
-  { q: "Where can I hire a React or Next.js developer in Nepal?", a: "You can hire Prerit — a professional React and Next.js developer based in Kathmandu. Available for freelance, full-time, and consulting. Contact: balpokharel62@gmail.com" },
-  { q: "What web development services are available?", a: "Full-stack web development, UI/UX design, graphic design, brand identity, SEO-optimized websites, and e-commerce — all from Kathmandu, Nepal." },
-  { q: "What technologies does Prerit use?", a: "React, Next.js 15, Node.js, MongoDB, TypeScript, PostgreSQL, Figma, and Adobe Creative Suite — a complete stack from design to deployment." },
-  { q: "Is Prerit available for international clients?", a: "Yes. Prerit works with clients worldwide while based in Kathmandu. Full remote delivery with clear communication and on-time shipping." },
-];
+export default function V4Home() {
+  const [projects, setProjects] = useState<any[]>([]);
+  const [siteSettings, setSiteSettings] = useState({
+    heroImage: "/og-image.png",
+    heroTitle: "Bal Krishna\\nPokharel.",
+    heroSubtitle: "Full-Stack Developer & Designer crafting digital perfection in Kathmandu, Nepal.",
+    aboutTitle: "One brain. Two disciplines.",
+    aboutText: "I am a developer & designer based in Kathmandu, Nepal. I work at the intersection of technology and visual design.\\n\\nI care about the details: button spacing, animation rhythm, API structure, and the feeling a brand leaves behind.",
+    contactTitle: "Let's Build.",
+    contactSubtitle: "Ready to create something extraordinary together?"
+  });
 
-export default function Home() {
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [menu, setMenu] = useState(false);
-  const [macTab, setMacTab] = useState("overview");
-  const [projects, setProjects] = useState<any[]>(PROJECTS);
-  const [skills, setSkills] = useState<any[]>([]);
-  const [heroImage, setHeroImage] = useState("");
-  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
-  const [formState, setFormState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  // Form State
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
 
-  useEffect(() => {
-    fetch("/api/settings")
-      .then(r => r.json())
-      .then(d => { if (d && d.heroImage) setHeroImage(d.heroImage); })
-      .catch(() => {});
-    fetch("/api/projects")
-      .then(r => r.json())
-      .then(d => {
-        if (Array.isArray(d) && d.length > 0) {
-          setProjects(d.map((p, i) => ({
-            id: p._id,
-            num: String(i + 1).padStart(2, '0'),
-            title: p.title,
-            type: p.type,
-            desc: p.description,
-            tags: p.tags || [],
-            image: p.image,
-            url: p.url
-          })));
-        }
-      })
-      .catch(() => {});
-    fetch("/api/skills")
-      .then(r => r.json())
-      .then(d => {
-        if (Array.isArray(d)) setSkills(d);
-      })
-      .catch(() => {});
-  }, []);
-
-  const handleContact = async (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFormState("sending");
+    setIsSubmitting(true);
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(formData),
       });
-      if (res.ok) { setFormState("sent"); setForm({ name: "", email: "", subject: "", message: "" }); }
-      else setFormState("error");
-    } catch { setFormState("error"); }
+      if (res.ok) {
+        setSubmitStatus("success");
+        setFormData({ name: "", email: "", message: "" });
+      } else {
+        setSubmitStatus("error");
+      }
+    } catch (err) {
+      setSubmitStatus("error");
+    }
+    setIsSubmitting(false);
   };
 
   // Filter logic
   const webProjects = projects.filter(p => !p.type?.toLowerCase().includes("graphic") && !p.type?.toLowerCase().includes("design"));
   const graphicProjects = projects.filter(p => p.type?.toLowerCase().includes("graphic") || p.type?.toLowerCase().includes("design"));
 
-  return (
-    <main className="v2-page">
-      {/* Creative Background Elements */}
-      <div className="bg-glow-1" />
-      <div className="bg-glow-2" />
-      <div className="bg-grid" />
-      
-      <style jsx global>{`
-        .v2-page {
-          --surface: #161b22;
-        }
-        .v2-page .projCard, .v2-page .servItem, .v2-page .faqItem, .v2-page .hCard {
-          background: #161b22;
-          border: 1px solid #30363d;
-          transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-        }
-        .v2-page .projCard:hover, .v2-page .servItem:hover, .v2-page .hCard:hover {
-          transform: translateY(-6px);
-          box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
-          border-color: #8b949e;
-        }
-        .v2-page .faqItem {
-          border-radius: 16px;
-          margin-bottom: 16px;
-          padding: 0 24px;
-        }
-        .v2-page .faqItem:hover {
-          border-color: #8b949e;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-        }
-      `}</style>
+  // Skills
+  const skills = [
+    "React", "Next.js 15", "TypeScript", "Node.js", "MongoDB", 
+    "PostgreSQL", "WebGL", "Framer Motion", "UI/UX Design", "Graphic Design", "Tailwind CSS"
+  ];
 
-      {/* ── NAV ── */}
-      <nav className="nav">
-        <a href="#top" className="logo" style={{ display: 'flex', alignItems: 'center' }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img 
-            src="/logo.png" 
-            alt="Logo" 
-            style={{ height: 32, objectFit: 'contain' }}
-            onError={(e) => { 
-              e.currentTarget.style.display = 'none'; 
-              (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'inline'; 
-            }} 
-          />
-          <span style={{ display: 'none' }}>PR<span>.</span></span>
-        </a>
-        <div className={"navLinks" + (menu ? " open" : "")}>
-          <a href="#work">Work</a>
-          <a href="#about">About</a>
-          <a href="#skills">Skills</a>
-          <a href="#contact">Contact</a>
-        </div>
-        <button className="burger" onClick={() => setMenu(!menu)} aria-label="Toggle menu">
-          <span /><span /><span />
-        </button>
+  useEffect(() => {
+    fetch("/api/projects")
+      .then(r => r.json())
+      .then(d => { 
+        if (Array.isArray(d) && d.length > 0) {
+          setProjects(d); 
+        } else {
+          // Fallback data if DB is empty or connection fails (due to ISP block)
+          setProjects([
+            { title: "E-Commerce Platform", description: "A high-performance Next.js 15 shopping experience.", type: "Web", tags: ["Next.js", "React", "MongoDB"] },
+            { title: "SaaS Dashboard", description: "Real-time analytics portal with dynamic charts.", type: "Web", tags: ["TypeScript", "Tailwind", "PostgreSQL"] },
+            { title: "TechCorp Rebranding", description: "Complete brand identity and marketing assets.", type: "Graphic", tags: ["Figma", "Illustrator", "Brand"] },
+            { title: "Product Packaging", description: "3D rendered packaging design for a modern beverage.", type: "Graphic", tags: ["Photoshop", "Blender", "Design"] },
+          ]);
+        }
+      })
+      .catch(() => {
+        // Fallback on network error
+        setProjects([
+          { title: "E-Commerce Platform", description: "A high-performance Next.js 15 shopping experience.", type: "Web", tags: ["Next.js", "React", "MongoDB"] },
+          { title: "SaaS Dashboard", description: "Real-time analytics portal with dynamic charts.", type: "Web", tags: ["TypeScript", "Tailwind", "PostgreSQL"] },
+          { title: "TechCorp Rebranding", description: "Complete brand identity and marketing assets.", type: "Graphic", tags: ["Figma", "Illustrator", "Brand"] },
+          { title: "Product Packaging", description: "3D rendered packaging design for a modern beverage.", type: "Graphic", tags: ["Photoshop", "Blender", "Design"] },
+        ]);
+      });
+      
+    fetch("/api/settings").then(r => r.json()).then(d => { if (d && !d.error) setSiteSettings(prev => ({ ...prev, ...d })); }).catch(() => {});
+  }, []);
+
+  const { scrollYProgress } = useScroll();
+  
+  // Downward Parallax: As user scrolls down (Y increases), the image moves down (+Y mapping)
+  const imageY = useTransform(scrollYProgress, [0, 0.4], [-50, 150]);
+  const imageOpacity = useTransform(scrollYProgress, [0, 0.1, 0.4], [0, 1, 0]);
+  const imageScale = useTransform(scrollYProgress, [0, 0.4], [0.9, 1.1]);
+
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
+
+  return (
+    <main style={{ backgroundColor: "#020204" }}>
+      {/* Sidebar Navigation */}
+      <nav style={{
+        position: 'fixed', left: '24px', top: '50%', transform: 'translateY(-50%)', zIndex: 100,
+        display: 'flex', flexDirection: 'column', gap: '24px',
+        background: 'rgba(255,255,255,0.03)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255,255,255,0.08)', padding: '24px 12px', borderRadius: '100px',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.5)'
+      }}>
+        <a href="#home" title="Home" className="nav-btn"><Home size={20} /></a>
+        <a href="#projects" title="Projects" className="nav-btn"><Grid size={20} /></a>
+        <a href="#skills" title="Skills" className="nav-btn"><Code size={20} /></a>
+        <a href="#contact" title="Contact" className="nav-btn"><Mail size={20} /></a>
       </nav>
 
-      {/* ── HERO ── */}
-      <section id="top" className="hero" style={{ overflow: "hidden", position: "relative" }}>
-        <div className="heroLeft" style={{ position: "relative", zIndex: 10 }}>
-          <h1>
-            Bal Krishna<br />
-            <em>Pokharel.</em>
+      <style jsx>{`
+        .nav-btn { color: #8b949e; padding: 12px; border-radius: 50%; transition: all 0.3s; display: flex; }
+        .nav-btn:hover { color: #fff; background: rgba(255,255,255,0.1); transform: scale(1.1); }
+      `}</style>
+
+      <V4Scene />
+
+      <div style={{ position: "relative", zIndex: 10, width: "100%", overflowX: "hidden" }}>
+        
+        {/* 1. Hero Section */}
+        <motion.div id="home" className="v4-section" style={{ height: '100vh', opacity: heroOpacity }}>
+          <h1 className="v4-title">
+            {siteSettings.heroTitle.split('\\n').map((line, i) => <span key={i}>{line}<br/></span>)}
           </h1>
-          <p className="heroSub">
-            Full-Stack Developer &amp; Graphic Designer crafting digital perfection in Kathmandu, Nepal.<br />
-            Available for freelance projects worldwide.
-          </p>
-          <div className="heroBtns">
-            <a href="#work" className="btnPrimary">View Work <ArrowUpRight size={15} /></a>
-            <a href="#contact" className="btnOutline">Get in Touch</a>
-          </div>
-        </div>
+          <p className="v4-subtitle">{siteSettings.heroSubtitle}</p>
+          <p className="v4-scroll-hint">SCROLL TO INITIATE <span>↓</span></p>
+        </motion.div>
 
-        {heroImage ? (
-          <motion.div 
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: [0, -15, 0], opacity: 1 }}
-            transition={{ y: { duration: 6, repeat: Infinity, ease: "easeInOut" }, opacity: { duration: 0.8 } }}
-            style={{
-              position: "absolute",
-              right: "5%",
-              top: "15%",
-              width: "40vw",
-              maxWidth: 500,
-              aspectRatio: "3/4",
-              borderRadius: 32,
-              overflow: "hidden",
-              border: "1px solid rgba(255,255,255,0.4)",
-              boxShadow: "0 24px 64px rgba(0,0,0,0.12)",
-              zIndex: 1
-            }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={heroImage} alt="Prerit" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.2), transparent)", pointerEvents: "none" }} />
-          </motion.div>
-        ) : (
-          <div className="code-window">
-            <div className="code-header">
-              <span className="code-r"/><span className="code-y"/><span className="code-g"/>
-            </div>
-            <pre className="code-body">
-              <span style={{ color: '#c678dd' }}>const</span> <span style={{ color: '#e5c07b' }}>Developer</span> = () =&gt; {'{\n'}
-              {'  '}<span style={{ color: '#c678dd' }}>return</span> {'(\n'}
-              {'    '}&lt;<span style={{ color: '#e06c75' }}>CreativeSpace</span>&gt;
-              <br/>
-              {'      '}&lt;<span style={{ color: '#e06c75' }}>Code</span>&gt;Architecting digital logic&lt;/<span style={{ color: '#e06c75' }}>Code</span>&gt;
-              <br/>
-              {'      '}&lt;<span style={{ color: '#e06c75' }}>Design</span>&gt;Minimalistic aesthetics&lt;/<span style={{ color: '#e06c75' }}>Design</span>&gt;
-              <br/>
-              {'    '}&lt;/<span style={{ color: '#e06c75' }}>CreativeSpace</span>&gt;
-              <br/>
-              {'  )\n'}
-              {'};'}
-            </pre>
-          </div>
-        )}
-      </section>
-
-      {/* ── MACBOOK MOCKUP ── */}
-      <section id="workspace" className="macSection">
-        <div className="macLabel">
-          <p>A developer &amp; designer in one — building from Kathmandu.</p>
-        </div>
-
-        <div className="macWrap">
-          <div className="macbook">
-
-            {/* Screen */}
-            <div className="macScreen">
-              <div className="macBar">
-                <span className="dot r" /><span className="dot y" /><span className="dot g" />
-                <span className="macBarTitle">prerit.dev — workspace</span>
-              </div>
-              <div className="macUI">
-                <aside className="macSide">
-                  <div className="macAvatar">PR</div>
-                  <strong>Prerit</strong>
-                  <small>KTM, Nepal 🇳🇵</small>
-                  <nav className="macNav">
-                    <span className={macTab === "overview" ? "active" : ""} onClick={() => setMacTab("overview")}>⌘ Overview</span>
-                    <span className={macTab === "projects" ? "active" : ""} onClick={() => setMacTab("projects")}>◈ Projects</span>
-                    <span className={macTab === "design" ? "active" : ""} onClick={() => setMacTab("design")}>✦ Design</span>
-                    <span className={macTab === "stack" ? "active" : ""} onClick={() => setMacTab("stack")}>▣ Stack</span>
-                  </nav>
-                </aside>
-                <div className="macMain">
-                  {macTab === "overview" && (
-                    <>
-                      <div className="macWelcome">
-                        <small>CURRENTLY BUILDING</small>
-                        <h3>Digital products<br /><em>that ship.</em></h3>
-                      </div>
-                      <div className="macCardGrid">
-                        <div className="macCard"><b>React</b><small>Frontend</small></div>
-                        <div className="macCard"><b>Node.js</b><small>Backend</small></div>
-                        <div className="macCard"><b>MongoDB</b><small>Database</small></div>
-                        <div className="macCard span2"><b>Next.js 15 · TypeScript · Figma</b><small>Full Stack · Nepal →World</small></div>
-                      </div>
-                    </>
-                  )}
-                  {macTab === "projects" && (
-                    <div className="macTabContent">
-                      <h4>◈ Recent Projects</h4>
-                      <ul className="macList">
-                        {projects.length > 0 ? (
-                          projects.slice(0, 5).map((p: any) => (
-                            <li key={p.id}><strong>{p.title}</strong> — {p.type}</li>
-                          ))
-                        ) : (
-                          <li>Loading projects...</li>
-                        )}
-                      </ul>
-                    </div>
-                  )}
-                  {macTab === "design" && (
-                    <div className="macTabContent">
-                      <h4>✦ Design Disciplines</h4>
-                      <div className="macPills">
-                        <span>UI/UX Design</span>
-                        <span>Design Systems</span>
-                        <span>Brand Identity</span>
-                        <span>Typography</span>
-                        <span>Prototyping</span>
-                      </div>
-                    </div>
-                  )}
-                  {macTab === "stack" && (
-                    <div className="macTabContent">
-                      <h4>▣ Core Stack</h4>
-                      <ul className="macList">
-                        <li><strong>Frontend:</strong> React, Next.js, Tailwind, CSS</li>
-                        <li><strong>Backend:</strong> Node.js, Express, Next APIs</li>
-                        <li><strong>Database:</strong> MongoDB, PostgreSQL</li>
-                        <li><strong>Tools:</strong> Git, Vercel, Figma</li>
-                      </ul>
-                    </div>
-                  )}
+        {/* 1.5. Profile Image Section (Glides down with you) */}
+        <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 5%' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '60px', width: '100%', maxWidth: '1000px' }}>
+            
+            <motion.div style={{ 
+              y: imageY, 
+              opacity: imageOpacity, 
+              scale: imageScale,
+              width: 'min(90vw, 400px)',
+              height: '500px',
+              flexShrink: 0
+            }}>
+              <div className="v4-creative-frame">
+                <div className="v4-image-inner">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={siteSettings.heroImage || "/og-image.png"} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Base */}
-            {/* Base */}
-            <div className="macBase" />
+            <motion.div style={{ flex: '1 1 300px', opacity: imageOpacity, y: imageY }}>
+              <h2 style={{ fontSize: 'clamp(32px, 4vw, 48px)', fontWeight: 800, margin: '0 0 24px', lineHeight: 1.1 }}>
+                {siteSettings.aboutTitle.split('\\n').map((line, i) => <span key={i}>{line}<br/></span>)}
+              </h2>
+              <div style={{ fontSize: '18px', color: 'rgba(255,255,255,0.7)', lineHeight: 1.8 }}>
+                {siteSettings.aboutText.split('\\n').map((line, i) => (
+                  <p key={i} style={{ marginBottom: 16 }}>{line}</p>
+                ))}
+              </div>
+            </motion.div>
 
           </div>
         </div>
-      </section>
 
-      {/* ── WORK ── */}
-      <section id="work" className="section">
-        <div className="secHead" style={{ margin: '0 auto 60px', textAlign: 'center' }}>
-          <div>
-            <h2>Selected <em>Projects</em></h2>
-          </div>
-          <p style={{ margin: '16px auto 0' }}>From full-stack products to visual identities — built with craft and clarity.</p>
-        </div>
-
+        {/* 2. Web Projects Section */}
+        <div id="projects" style={{ position: 'relative', top: '-100px', visibility: 'hidden' }} />
         {webProjects.length > 0 && (
-          <div style={{ marginBottom: graphicProjects.length > 0 ? 80 : 0 }}>
-            <h3 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text)', marginBottom: 24, paddingLeft: 12, borderLeft: '4px solid var(--accent)', letterSpacing: '0.5px' }}>WEB DEVELOPMENT</h3>
-            <div className="projGrid">
-              {webProjects.map(p => (
-                <article key={p.id || p.num} className="projCard">
-                  <div className="projVisual" style={{ padding: p.image ? 0 : undefined, overflow: 'hidden' }}>
-                    {p.image ? (
-                      <img src={p.image} alt={p.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    ) : (
-                      <>
-                        <span className="projNum">{p.num}</span>
-                        <div className="projOrb" />
-                      </>
-                    )}
+          <div className="v4-section" style={{ minHeight: '100vh', paddingBottom: '100px' }}>
+            <h2 className="v4-heading">Web Development</h2>
+            <div className="v4-grid">
+              {webProjects.slice(0, 4).map((p, i) => (
+                <div key={i} className="v4-card">
+                  <h3 style={{ fontSize: 24, fontWeight: 700, margin: '0 0 12px' }}>{p.title}</h3>
+                  <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, margin: '0 0 20px' }}>{p.description}</p>
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    {p.tags?.map((t: string) => (
+                      <span key={t} style={{ fontSize: 12, padding: "4px 12px", background: "rgba(255,255,255,0.05)", borderRadius: 100, color: "#8b949e" }}>
+                        {t}
+                      </span>
+                    ))}
                   </div>
-                  <div className="projInfo">
-                    <small>{p.type}</small>
-                    <h3 style={{ display: p.url ? "block" : "flex" }}>
-                      {p.url ? (
-                        <a href={p.url} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          {p.title} <ArrowUpRight size={17} />
-                        </a>
-                      ) : (
-                        <>{p.title} <ArrowUpRight size={17} /></>
-                      )}
-                    </h3>
-                    <p>{p.desc}</p>
-                    <div className="projTags">
-                      {p.tags.map((t: string) => <span key={t}>{t}</span>)}
-                    </div>
-                  </div>
-                </article>
+                </div>
               ))}
             </div>
           </div>
         )}
 
+        {/* 3. Graphic Projects Section */}
         {graphicProjects.length > 0 && (
-          <div>
-            <h3 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text)', marginBottom: 24, paddingLeft: 12, borderLeft: '4px solid #8b5cf6', letterSpacing: '0.5px' }}>GRAPHIC DESIGN</h3>
-            <div className="projGrid">
-              {graphicProjects.map(p => (
-                <article key={p.id || p.num} className="projCard">
-                  <div className="projVisual" style={{ padding: p.image ? 0 : undefined, overflow: 'hidden' }}>
-                    {p.image ? (
-                      <img src={p.image} alt={p.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    ) : (
-                      <>
-                        <span className="projNum">{p.num}</span>
-                        <div className="projOrb" style={{ background: 'linear-gradient(135deg, #8b5cf6, #c4b5fd)' }} />
-                      </>
-                    )}
+          <div className="v4-section" style={{ minHeight: '100vh', paddingBottom: '100px' }}>
+            <h2 className="v4-heading">Graphic Design</h2>
+            <div className="v4-grid">
+              {graphicProjects.slice(0, 4).map((p, i) => (
+                <div key={i} className="v4-card" style={{ borderColor: 'rgba(139, 92, 246, 0.3)' }}>
+                  <h3 style={{ fontSize: 24, fontWeight: 700, margin: '0 0 12px' }}>{p.title}</h3>
+                  <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, margin: '0 0 20px' }}>{p.description}</p>
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    {p.tags?.map((t: string) => (
+                      <span key={t} style={{ fontSize: 12, padding: "4px 12px", background: "rgba(139, 92, 246, 0.1)", borderRadius: 100, color: "#c4b5fd" }}>
+                        {t}
+                      </span>
+                    ))}
                   </div>
-                  <div className="projInfo">
-                    <small style={{ color: '#8b5cf6' }}>{p.type}</small>
-                    <h3 style={{ display: p.url ? "block" : "flex" }}>
-                      {p.url ? (
-                        <a href={p.url} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          {p.title} <ArrowUpRight size={17} />
-                        </a>
-                      ) : (
-                        <>{p.title} <ArrowUpRight size={17} /></>
-                      )}
-                    </h3>
-                    <p>{p.desc}</p>
-                    <div className="projTags">
-                      {p.tags.map((t: string) => <span key={t}>{t}</span>)}
-                    </div>
-                  </div>
-                </article>
+                </div>
               ))}
             </div>
           </div>
         )}
-      </section>
 
-      {/* ── SERVICES ── */}
-      <section id="services" className="servSection">
-        <div className="section">
-          <div className="secHead" style={{ margin: '0 auto 60px', textAlign: 'center' }}>
-            <div>
-              <h2>What I <em>Do</em></h2>
-            </div>
-          </div>
-          <div className="servGrid">
-            {[
-              { n: "01", h: "Graphic Design", p: "Visual identities, social creatives, posters and brand systems with a strong point of view." },
-              { n: "02", h: "UI / UX Design", p: "Clean interfaces, design systems and user flows that make complex products feel simple." },
-              { n: "03", h: "Full Stack Dev", p: "Fast, scalable web apps using React, Next.js, Node.js and MongoDB — end to end." },
-            ].map(s => (
-              <div key={s.n} className="servItem">
-                <span className="servN">{s.n}</span>
-                <h3>{s.h}</h3>
-                <p>{s.p}</p>
+        {/* 4. Skills Section */}
+        <div id="skills" className="v4-section" style={{ minHeight: '80vh' }}>
+          <h2 className="v4-heading">Core Capabilities</h2>
+          <div className="v4-skills-grid">
+            {skills.map(skill => (
+              <div key={skill} className="v4-skill-pill">
+                {skill}
               </div>
             ))}
           </div>
         </div>
-      </section>
 
-      {/* ── SKILLS ── */}
-      <section id="skills" className="section">
-        <div className="secHead" style={{ margin: '0 auto 60px', textAlign: 'center' }}>
-          <div>
-            <h2>Core <em>Stack</em></h2>
-          </div>
-        </div>
-        <div className="servGrid">
-          {(skills.length > 0 ? skills : [
-            { _id: '1', category: "Frontend", skills: ["React", "Next.js", "Tailwind CSS", "TypeScript"] },
-            { _id: '2', category: "Backend", skills: ["Node.js", "Express", "Next APIs", "REST"] },
-            { _id: '3', category: "Database", skills: ["MongoDB", "PostgreSQL", "Mongoose", "Prisma"] },
-            { _id: '4', category: "Design", skills: ["Figma", "UI/UX", "Brand Identity", "Adobe CC"] }
-          ]).map(s => (
-            <div key={s._id} className="servItem">
-              <span className="servN" style={{ marginBottom: 24, color: "#fff" }}>{s.category}</span>
-              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", fontSize: 16, color: "#cbd5e1", lineHeight: 1.8, fontWeight: 500 }}>
-                {s.skills.map((t: string, i: number) => (
-                  <span key={i} style={{ display: "flex", alignItems: "center", whiteSpace: "nowrap" }}>
-                    {t}
-                    {i < s.skills.length - 1 && <span style={{ color: "#475569", margin: "0 12px" }}>•</span>}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="about" className="section aboutSection">
-        <div className="aboutLeft">
-          <h2>One brain.<br /><em>Two disciplines.</em></h2>
-          <p>I&apos;m Prerit — a developer &amp; designer based in <strong>Kathmandu, Nepal</strong>. I work at the intersection of technology and visual design.</p>
-          <p>I care about the details: button spacing, animation rhythm, API structure, and the feeling a brand leaves behind.</p>
-        </div>
-      </section>
-
-      {/* ── FAQ ── */}
-      <section id="faq" className="section">
-        <div className="secHead" style={{ margin: '0 auto 60px', textAlign: 'center' }}>
-          <div>
-            <h2>Common <em>Questions</em></h2>
-          </div>
-        </div>
-        <div className="faqList">
-          {FAQS.map((f, i) => (
-            <div key={i} className={"faqItem" + (openFaq === i ? " open" : "")}>
-              <button className="faqQ" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
-                <span>{f.q}</span>
-                <span className="faqIcon">{openFaq === i ? "−" : "+"}</span>
+        {/* 5. Contact Section */}
+        <div id="contact" className="v4-section" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingBottom: '10vh' }}>
+          <div style={{ width: '100%', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+            <h2 className="v4-heading" style={{ fontSize: 'clamp(40px, 6vw, 80px)', textShadow: '0 0 40px #06b6d4', margin: '0 0 16px' }}>{siteSettings.contactTitle}</h2>
+            <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 20, marginBottom: 40 }}>{siteSettings.contactSubtitle}</p>
+            
+            <form onSubmit={handleFormSubmit} className="v4-form-container">
+              <input 
+                type="text" 
+                placeholder="YOUR NAME" 
+                className="v4-input" 
+                required 
+                value={formData.name}
+                onChange={e => setFormData({ ...formData, name: e.target.value })}
+              />
+              <input 
+                type="email" 
+                placeholder="YOUR EMAIL" 
+                className="v4-input" 
+                required 
+                value={formData.email}
+                onChange={e => setFormData({ ...formData, email: e.target.value })}
+              />
+              <textarea 
+                placeholder="YOUR MESSAGE" 
+                className="v4-input" 
+                style={{ height: '120px', resize: 'none' }} 
+                required
+                value={formData.message}
+                onChange={e => setFormData({ ...formData, message: e.target.value })}
+              />
+              <button type="submit" className="v4-submit" disabled={isSubmitting}>
+                {isSubmitting ? "TRANSMITTING..." : submitStatus === "success" ? "MESSAGE SENT" : "ESTABLISH CONNECTION"}
               </button>
-              {openFaq === i && (
-                <div className="faqA"><p>{f.a}</p></div>
+              {submitStatus === "error" && (
+                <p style={{ color: "#ef4444", fontSize: 12, marginTop: 8 }}>Network interference detected. Please try again.</p>
               )}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── CONTACT ── */}
-      <section id="contact" className="section contactSection">
-        <div className="contactLeft">
-          <h2>Let&apos;s build<br /><em>something.</em></h2>
-          <p>Available for freelance, full-time, and creative collaborations — in Nepal and worldwide.</p>
-          <a href="mailto:balpokharel62@gmail.com" className="contactMail">
-            balpokharel62@gmail.com <ArrowUpRight size={16} />
-          </a>
-          <div className="socialRow">
-            <a href="https://github.com/" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><Github size={18} /></a>
-            <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><Linkedin size={18} /></a>
-            <a href="mailto:balpokharel62@gmail.com" aria-label="Email"><Mail size={18} /></a>
+            </form>
           </div>
         </div>
-        <form className="contactForm" onSubmit={handleContact}>
-          <div className="fRow">
-            <div className="fField">
-              <label htmlFor="fn">Name</label>
-              <input id="fn" type="text" required placeholder="Your name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
-            </div>
-            <div className="fField">
-              <label htmlFor="fe">Email</label>
-              <input id="fe" type="email" required placeholder="your@email.com" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
-            </div>
-          </div>
-          <div className="fField">
-            <label htmlFor="fs">Subject</label>
-            <input id="fs" type="text" placeholder="Project idea..." value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} />
-          </div>
-          <div className="fField">
-            <label htmlFor="fm">Message</label>
-            <textarea id="fm" rows={5} required placeholder="Tell me about your project..." value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} />
-          </div>
-          {formState === "sent" && <p className="fOk">✓ Message sent! I&apos;ll be in touch.</p>}
-          {formState === "error" && <p className="fErr">Something went wrong. Email me directly.</p>}
-          <button type="submit" id="contact-submit" className="btnPrimary" disabled={formState === "sending"}>
-            {formState === "sending" ? "Sending..." : "Send Message"} <ArrowUpRight size={15} />
-          </button>
-        </form>
-      </section>
-
-      {/* ── FOOTER ── */}
-      <footer className="footer">
-        <span className="footLogo">PR.</span>
-        <small>© 2026 Prerit · Kathmandu, Nepal</small>
-        <a href="#top" className="footTop"><ArrowUp size={13} /> Top</a>
-      </footer>
+        
+      </div>
 
       <Chatbot />
     </main>
