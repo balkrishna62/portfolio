@@ -23,9 +23,10 @@ export async function sendEmailNotification(subject: string, text: string) {
   }
 
   try {
+    const receiver = process.env.RECEIVER_EMAIL || process.env.EMAIL_USER;
     const info = await transporter.sendMail({
       from: `"Portfolio Notification" <${process.env.EMAIL_USER}>`,
-      to: process.env.EMAIL_USER, // Send it to yourself
+      to: receiver, // Send to specific receiver or fallback to sender
       subject,
       text,
     });
